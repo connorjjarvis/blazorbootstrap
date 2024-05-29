@@ -142,7 +142,7 @@ public partial class AutoComplete<TItem> : BlazorBootstrapComponentBase
         var searchKey = Value;
 
         if (string.IsNullOrWhiteSpace(searchKey))
-            return;
+            searchKey = " ";
 
         var request = new AutoCompleteDataProviderRequest<TItem> { Filter = new FilterItem(PropertyName, searchKey, GetFilterOperator(), StringComparison), CancellationToken = cancellationToken };
 
@@ -201,12 +201,20 @@ public partial class AutoComplete<TItem> : BlazorBootstrapComponentBase
         await JSRuntime.InvokeVoidAsync("window.blazorBootstrap.autocomplete.hide", Element);
     }
 
+    private async Task showOptions()
+    {
+		await ShowAsync();
+
+		await FilterDataAsync();
+	}
     private async Task OnInputChangedAsync(ChangeEventArgs args)
     {
         searchInProgress = true;
 
         selectedIndex = -1;
         Value = args?.Value?.ToString()!;
+
+        Console.WriteLine($"Value: {Value}");
 
         SetInputHasValue();
 
